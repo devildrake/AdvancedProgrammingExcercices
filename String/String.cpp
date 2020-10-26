@@ -1,7 +1,7 @@
 #include "String.h"
-#include "String.h"
 String::String() {
-	chars = new char[0];
+	chars = new char[1];
+	chars[0] = '\0';
 }
 
 int String::length()const {
@@ -13,11 +13,22 @@ int String::length()const {
 }
 
 void String::clear() {
-	chars = new char[0];
+
+	if (chars != nullptr) {
+		delete[] chars;
+	}
+
+	//delete chars;
+	chars = new char[1];
+	chars[0] = '\0';
 }
 
 
-
+String::~String() {
+	if (chars != nullptr) {
+		delete[] chars;
+	}
+}
 
 std::ostream& operator << (std::ostream& os, const String& s)
 {
@@ -29,30 +40,32 @@ std::ostream& operator << (std::ostream& os, const String& s)
 }
 
 String::String(const String& b) {
-	int length = b.length();
+
+	int length = b.length(); //Length without the '\0' at the end
 	chars = new char[length + 1];
-	for (int i = 0; i < length; ++i)
+	for (int i = 0; i < length + 1; ++i)
 	{
 		chars[i] = b.chars[i];
 	}
-	chars[length] = '\0';
+	//chars[length] = '\0';
 }
 
-String::String(String&& a) :chars{ a.chars } {
-	std::cout << "Move Constructor for "
-		<< *a.chars << std::endl;
+String::String(String&& a)noexcept :chars{ a.chars } {
 	a.chars = nullptr;
 }
 
 String::String(const char* b) {
-	int count = 0;
-	while (b[count] != '\0') {
-		count++;
+	int charCount = 0;
+
+	//charCount equals the amount of characters found plus 1 (last is \0)
+	while (b[charCount] != '\0') {
+		charCount++;
 	}
-	chars = new char[count + 1];
-	for (int i = 0; i < count + 1; i++)
+	charCount++;
+	chars = new char[charCount];
+	for (int i = 0; i < charCount; i++)
 	{
 		chars[i] = b[i];
 	}
-	chars[count + 1] = '\0';
+	chars[charCount - 1] = '\0';
 }
